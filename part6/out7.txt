@@ -1,0 +1,4 @@
+Loaded 290 data points
+Data Loaded with rows 290
+kmeans_distortion is 1100420960616.457
+hierarchical_distortion is 607404453849.4803
