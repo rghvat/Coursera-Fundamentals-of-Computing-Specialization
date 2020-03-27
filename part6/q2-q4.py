@@ -14,7 +14,8 @@ import math
 import alg_cluster
 import urllib.request
 import random
-
+import numpy as np 
+import copy
 
 # conditional imports
 if DESKTOP:
@@ -247,19 +248,24 @@ def run_example():
 
     Set DESKTOP = True/False to use either matplotlib or simplegui
     """
-    data_table = load_data_table(DATA_3108_URL)
+    data_table = load_data_table(DATA_111_URL)
     
     singleton_list = []
     for line in data_table:
         singleton_list.append(alg_cluster.Cluster(set([line[0]]), line[1], line[2], line[3], line[4]))
-        
-    cluster_list = hierarchical_clustering(singleton_list, 15)	
+     
+    # change data point to  3108   
+    # cluster_list = hierarchical_clustering(singleton_list, 15)
+    # cluster_list = kmeans_clustering(singleton_list, 15, 1000)
+
+    # cluster_list = hierarchical_clustering(singleton_list, 9)
+    cluster_list = kmeans_clustering(singleton_list, 9, 1000)    
     print("Displaying", len(cluster_list), "sequential clusters")
 
     #cluster_list = alg_project3_solution.hierarchical_clustering(singleton_list, 9)
     #print "Displaying", len(cluster_list), "hierarchical clusters"
 
-    #cluster_list = alg_project3_solution.kmeans_clustering(singleton_list, 9, 5)	
+    #cluster_list = alg_project3_solution.kmeans_clustering(singleton_list, 9, 5)   
     #print "Displaying", len(cluster_list), "k-means clusters"
 
             
@@ -270,6 +276,76 @@ def run_example():
     else:
         alg_clusters_simplegui.PlotClusters(data_table, cluster_list)   # use toggle in GUI to add cluster centers
     
-run_example()
+#run_example()
 
 
+def compute_distortion(cluster_list, data_url):
+    ''' How better is the clustring is ??
+        compute it by Error Formula
+        Given a Cluster C its error is the sum of the squares of the distance from each country in the cluster
+        to the cluster's center, weighted by population of cluster
+    '''
+    data_table = load_data_table(data_url)
+    distortion = 0
+    for center in cluster_list:
+        distortion += center.cluster_error(data_table)
+
+    print('distortion  is {}'.format(distortion))
+    return distortion
+'''
+data_table = load_data_table(DATA_290_URL)
+cluster_list = []
+hierarchical_center = []
+kmeans_center = []  
+for line in data_table:
+    cluster_list.append(alg_cluster.Cluster(set([line[0]]), line[1], line[2], line[3], line[4]))
+
+
+hierarchical_center = hierarchical_clustering(copy.deepcopy(cluster_list), 16)
+kmeans_center = kmeans_clustering(, 16, 5)
+
+compute_distortion(hierarchical_center, DATA_290_URL)
+compute_distortion(kmeans_center, DATA_290_URL)
+'''
+
+def question11():
+    '''
+    '''
+    hierarchical_distortion = []
+    kmeans_distortion       = []
+
+    axis = [n for n in range(6, 21)]
+    data_table = load_data_table(DATA_896_URL)
+    print('Data Loaded with rows {}'.format(len(data_table)))
+    cluster_list = []
+    hierarchical_center = []
+    kmeans_center = []
+
+    for line in data_table:
+        cluster_list.append(alg_cluster.Cluster(set([line[0]]), line[1], line[2], line[3], line[4]))
+
+    for i in range(6, 21):
+        hierarchical_center = hierarchical_clustering(copy.deepcopy(cluster_list), i)
+        kmeans_center = kmeans_clustering(copy.deepcopy(cluster_list), i, 5)
+
+        kmeans_distortion.append(compute_distortion(kmeans_center, DATA_896_URL))
+
+        print('kmeans_distortion')
+                    
+        hierarchical_distortion.append(compute_distortion(hierarchical_center , DATA_896_URL))
+        print('hierarchical_distortion ')
+
+    hierarchical_distortion = [distortion / 10**11 for distortion in hierarchical_distortion]
+    kmeans_distortion       = [distortion / 10**11 for distortion in kmeans_distortion]
+
+    alg_clusters_matplotlib.plt.axis([6, 20, 0, max(max(hierarchical_distortion), max(kmeans_distortion))])
+    alg_clusters_matplotlib.plt.plot(axis, hierarchical_distortion, label = 'hierarchical', color='Maroon')
+    alg_clusters_matplotlib.plt.plot(axis, kmeans_distortion, label = 'kmeans', color='Green')
+    alg_clusters_matplotlib.plt.legend()
+
+    alg_clusters_matplotlib.plt.title('Distortion plot on 290 data point')
+    alg_clusters_matplotlib.plt.xlabel('No of clusters')
+    alg_clusters_matplotlib.plt.ylabel('distortion * 10e+11')
+    alg_clusters_matplotlib.plt.savefig('distortion_896')
+
+question11()
