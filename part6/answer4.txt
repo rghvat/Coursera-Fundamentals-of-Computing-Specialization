@@ -1,0 +1,4 @@
+Hierarchical clustering can't handle big data well but K means clustering can. 
+complexity is O(n ^ 3) and O( k*n*iteration ) respectively
+when k is small kmeans is linear in input size whereas Hierachical is quad. running time.
+kmeans result may differ in subsequent algorithm run.`
