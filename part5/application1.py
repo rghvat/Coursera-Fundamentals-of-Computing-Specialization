@@ -118,16 +118,28 @@ def generate_er_graph(node, probablity = .5):
         for jth in range(0, node):
             if random.randint(0, 10) / 10 >= probablity and jth != ith:
                 er_graph[ith].add(jth)
-    print('Graph generated')
-    in_degree_er = in_degree_distribution(er_graph)
-    in_degree_cit = in_degree_distribution(citation_graph)
-    node = max(node, len(in_degree_er))
+    return er_graph
     
-    plt.plot(list(range(node)), list(in_degree_er.values()), 'o', color='Green')
-    plt.plot(list(range(node)), list(in_degree_cit.values()), 'o', color='Red')
+def question2():
+    in_degree_cit = normalize_diagraph(in_degree_distribution(citation_graph))
+    print('len of in_degree_cit {}'.format(len(in_degree_cit)))
+    in_degree_er_25 = normalize_diagraph(in_degree_distribution(generate_er_graph(1000, .25)))
+    in_degree_er_50 = normalize_diagraph(in_degree_distribution(generate_er_graph(1000, .5)))
+    in_degree_er_75 = normalize_diagraph(in_degree_distribution(generate_er_graph(1000, .75)))
+    in_degree_er_85 = normalize_diagraph(in_degree_distribution(generate_er_graph(1000, .85)))
+    in_degree_er_95 = normalize_diagraph(in_degree_distribution(generate_er_graph(1000, .95)))
+    print('Graph generated')
+    
+        
+    plt.loglog(list(in_degree_er_25.keys()), list(in_degree_er_25.values()), 'o', color='Green', label='random graph with 1000 node and p=.25')
+    plt.loglog(list(in_degree_er_50.keys()), list(in_degree_er_50.values()), 'o', color='Yellow', label='random graph with 1000 node and p=.5')
+    plt.loglog(list(in_degree_er_75.keys()), list(in_degree_er_75.values()), 'o', color='Blue', label='random graph with 1000 node and p=.75')
+    plt.loglog(list(in_degree_er_85.keys()), list(in_degree_er_85.values()), 'o', color='Lime', label='random graph with 1000 node and p=.85')
+    plt.loglog(list(in_degree_er_95.keys()), list(in_degree_er_95.values()), 'o', color='Olive', label='random graph with 1000 node and p=.95')
+    plt.legend()
+    #plt.loglog(list(in_degree_cit.keys()), list(in_degree_cit.values()), 'o', color='Red', label='citation Graph')
     plt.xlabel('Number of Nodes')
     plt.ylabel('Normalized in degree distribution')
-    plt.savefig('Question 2 solution')
+    plt.savefig('Question 2 solution without the citation graph')
     plt.show()
-generate_er_graph(5000, probablity = .2)
-    
+question2()
